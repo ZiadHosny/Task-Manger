@@ -39,6 +39,21 @@ export const updateTask = catchAsyncError(async (req: Request, res: Response, ne
 
 })
 
+//
+export const updateTaskCompleted = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+
+    const { id } = req.params;
+    const { isCompleted } = req.body
+    const updatedTask = await TaskModel.findByIdAndUpdate(id, { $set: { isCompleted } }, { new: true });
+
+    if (!updatedTask) {
+        return next(new AppError(`cannot find any Task with ID ${id}`, 404))
+    }
+
+    res.status(201).json({ message: "success", updatedTask });
+
+})
+
 // DELETE Task
 export const deleteTask = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
 

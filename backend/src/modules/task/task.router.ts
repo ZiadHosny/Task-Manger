@@ -12,6 +12,7 @@ taskRouter
     .route('/:id')
     .get(userAuth, Task.getTask)
     .put(userAuth, Task.updateTask)
+    .patch(userAuth, Task.updateTaskCompleted)
     .delete(userAuth, Task.deleteTask)
 
 export default taskRouter
