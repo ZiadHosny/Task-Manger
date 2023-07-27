@@ -12,7 +12,6 @@ export const signUp = catchAsyncError(async (req: Request, res: Response, next: 
 
     let user = await UserModel.findOne({ email })
     if (user) {
-        console.log('sssssssss')
         return next(new AppError("Email Already exists", 400))
     } else {
         bcrypt.hash(password, rounds, async (err, hash) => {

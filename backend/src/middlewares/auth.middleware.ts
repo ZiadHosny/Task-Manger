@@ -14,7 +14,6 @@ export const userAuth = (req: Request, res: Response, next: NextFunction) => {
 
     const { secretKey } = getFromEnv()
     const token = req.header('token')
-    console.log(token)
     if (token)
         jwt.verify(token, secretKey, async (err, decoded: any) => {
             if (err) {

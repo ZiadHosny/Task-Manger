@@ -1,0 +1,25 @@
+ header {
+     background-color: #0a0a23;
+     display: flex;
+     flex-wrap: wrap;
+     align-items: center;
+     justify-content: space-between;
+     padding: 12px;
+     padding-top: 0.5rem;
+     padding-bottom: 0.5rem;
+ }
+
+ .website-logo {
+     display: flex;
+     width: auto;
+     height: 50px;
+     margin: 7px 0;
+ }
+
+
+ @media screen and (max-width: 590px) {
+     .homepage-navbar {
+         display: block;
+     }
+
+ }

@@ -7,7 +7,6 @@ export const validation = (schema: Joi.ObjectSchema) => {
     return (req: Request, res: Response, next: NextFunction) => {
 
         const { error } = schema.validate(req.body, { abortEarly: true })
-        console.log(`Validation for Request Body part:  ${req.body}`);
 
         return error ?
             next(new AppError(error.message, 400)) :
