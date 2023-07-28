@@ -18,9 +18,9 @@ export const getAllTasks = catchAsyncError(async (req: Request, res: Response, n
 // POST a Task
 export const createTask = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
 
-    const { taskId, taskName, description, dueDate, isCompleted } = req.body
+    const { taskId, taskName, description, dueDate, isCompleted, tags } = req.body
 
-    const task = await TaskModel.create({ taskId, taskName, description, dueDate, isCompleted, createdBy: req.userId })
+    const task = await TaskModel.create({ taskId, taskName, description, dueDate, isCompleted, tags, createdBy: req.userId })
 
     res.status(201).json({ message: "success", data: task });
 })
@@ -29,7 +29,7 @@ export const createTask = catchAsyncError(async (req: Request, res: Response, ne
 export const updateTask = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
 
     const { id } = req.params;
-    const updatedTask = await TaskModel.findByIdAndUpdate(id, { ...req.body }, { new: true });
+    const updatedTask = await TaskModel.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!updatedTask) {
         return next(new AppError(`cannot find any Task with ID ${id}`, 404))

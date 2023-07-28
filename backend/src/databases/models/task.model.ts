@@ -20,6 +20,7 @@ const taskSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         },
+        tags: [{ type: String, default: [] }],
         createdBy: {
             type: mongoose.Types.ObjectId,
             ref: 'User'
