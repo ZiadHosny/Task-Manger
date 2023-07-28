@@ -6,7 +6,7 @@ export const useTasks = () => {
     const { backendBaseURL } = useConfig()
 
     const result = useAsyncFn(async ({ page = 1, sort = '' }: { page?: number, sort?: string }): Promise<{ tasks: Task[], count: number }> => {
-        const response = await fetch(`${backendBaseURL}/api/tasks?page=${page}&&sort=${sort}`,
+        const response = await fetch(`${backendBaseURL}/api/tasks?page=${page}&sort=${sort}`,
             {
                 headers: new Headers({
                     token: JSON.parse(localStorage['user']).token

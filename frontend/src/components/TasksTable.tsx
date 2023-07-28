@@ -25,17 +25,14 @@ export const TaskTable = () => {
     const [createOrUpdateTask, setCreateOrUpdateTask] = useRecoilState(createOrUpdateTaskState)
     const [_, setOpenCreateTask] = useRecoilState(openCreateOrUpdateTaskState)
 
-    const deleteTaskBtn = (id: string) => {
-        deleteTask(id)
+    const deleteTaskBtn = async (id: string) => {
+        await deleteTask(id)
+
     }
 
     React.useEffect(() => {
         getAllTasks({})
     }, [])
-
-    React.useEffect(() => {
-        setLoading(loading)
-    }, [loading])
 
     React.useEffect(() => {
         setLoading(taskCompleteLoading)
@@ -62,73 +59,79 @@ export const TaskTable = () => {
             <Box style={{ margin: 30, display: 'flex', justifyContent: 'flex-end' }}>
                 <Button variant='contained' onClick={() => { setOpenCreateTask({ createOrUpdate: 'create', open: true }) }}> Create Task</Button>
             </Box>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead style={{ background: 'black' }}>
-                        <TableRow>
-                            <TableCell align="center">Task Name</TableCell>
-                            <TableCell align="center">Description</TableCell>
-                            <TableCell align="center">
-                                <TableTitle label='Due Date' sort={'dueDate'} />
-                            </TableCell>
-                            <TableCell align="center">
-                                <TableTitle label='Is Completed' sort={'-isCompleted'} />
-                            </TableCell>
-                            <TableCell align="center">Tags</TableCell>
-                            <TableCell align="center">Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {value?.tasks?.map((task) => (
-                            < TableRow
-                                key={task.taskId}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell align="center">{task.taskName}</TableCell>
-                                <TableCell align="center">{task.description}</TableCell>
-                                <TableCell align="center">{task.dueDate.toString().split('T').join(' | ').split('.')[0]}</TableCell>
-                                <TableCell align="center">
-                                    <Checkbox color="success"
-                                        checked={task.isCompleted}
-                                        onChange={() => {
-                                            changeTaskCompletion({ taskId: task.taskId, isCompleted: !task.isCompleted })
-                                        }}
-
-                                    />
-                                </TableCell>
-                                <TableCell align="center" style={{ maxWidth: 150 }}>
-                                    {task.tags.length > 0 ?
-                                        task.tags.map((tag) => < Chip label={tag}/>)
-                                        :
-                                        <></>
-                                    }
-                                </TableCell>
-                                <TableCell align="center">
-                                    <IconButton
-                                        onClick={() => deleteTaskBtn(task.taskId)}
-                                    >
-                                        <DeleteIcon style={{ color: 'white' }} />
-                                    </IconButton>
-                                    <IconButton
-                                        onClick={() => setOpenCreateTask({ createOrUpdate: 'update', open: true, task })}
-                                    >
-                                        <EditIcon style={{ color: 'white' }} />
-                                    </IconButton>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-
-            </TableContainer >
-            {value?.count && value?.count > 5 ?
-                <Pagination
-                    style={{ padding: 5, display: 'flex', justifyContent: 'flex-end' }}
-                    count={Math.ceil(value.count / 5)}
-                    onChange={(_, page) => { setCurrentPage(page); getAllTasks({ page }) }}
-                />
+            {value?.count && value?.count <= 0 ?
+                <div>No Tasks Found</div>
                 :
-                <></>
+                <>
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead style={{ background: 'black' }}>
+                                <TableRow>
+                                    <TableCell align="center">Task Name</TableCell>
+                                    <TableCell align="center">Description</TableCell>
+                                    <TableCell align="center">
+                                        <TableTitle label='Due Date' sort={'dueDate'} />
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <TableTitle label='Is Completed' sort={'-isCompleted'} />
+                                    </TableCell>
+                                    <TableCell align="center">Tags</TableCell>
+                                    <TableCell align="center">Actions</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {value?.tasks?.map((task) => (
+                                    < TableRow
+                                        key={task.taskId}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell align="center">{task.taskName}</TableCell>
+                                        <TableCell align="center">{task.description}</TableCell>
+                                        <TableCell align="center">{task.dueDate.toString().split('T').join(' | ').split('.')[0]}</TableCell>
+                                        <TableCell align="center">
+                                            <Checkbox color="success"
+                                                checked={task.isCompleted}
+                                                onChange={() => {
+                                                    changeTaskCompletion({ taskId: task.taskId, isCompleted: !task.isCompleted })
+                                                }}
+
+                                            />
+                                        </TableCell>
+                                        <TableCell align="center" style={{ maxWidth: 150 }}>
+                                            {task.tags.length > 0 ?
+                                                task.tags.map((tag, i) => < Chip key={`tag${i}`} label={tag} />)
+                                                :
+                                                <></>
+                                            }
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <IconButton
+                                                onClick={() => deleteTaskBtn(task.taskId)}
+                                            >
+                                                <DeleteIcon style={{ color: 'white' }} />
+                                            </IconButton>
+                                            <IconButton
+                                                onClick={() => setOpenCreateTask({ createOrUpdate: 'update', open: true, task })}
+                                            >
+                                                <EditIcon style={{ color: 'white' }} />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+
+                    </TableContainer >
+                    {value?.count && value?.count > 5 ?
+                        <Pagination
+                            style={{ padding: 5, display: 'flex', justifyContent: 'flex-end' }}
+                            count={Math.ceil(value.count / 5)}
+                            onChange={(_, page) => { setCurrentPage(page); getAllTasks({ page }) }}
+                        />
+                        :
+                        <></>
+                    }
+                </>
             }
             <CreateTask />
 

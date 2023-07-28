@@ -32,8 +32,8 @@ export const CreateTask = () => {
     const [openCreateTask, setOpenCreateTask] = useRecoilState(openCreateOrUpdateTaskState)
     const [dueDate, setDueDate] = useRecoilState(taskDateState)
 
-    const [{ loading: createLoading }, createTask] = useCreateTask()
-    const [{ loading: updateLoading }, updateTask] = useUpdateTask()
+    const [{ }, createTask] = useCreateTask()
+    const [{ }, updateTask] = useUpdateTask()
 
     const handleClose = () => {
         setOpenCreateTask({ open: false });
@@ -61,15 +61,12 @@ export const CreateTask = () => {
                 tags: tags.split(',').filter((e) => e)
             })
         }
+        setIsCompleted(false)
+        setTaskName('')
+        setDescription('')
+        setDueDate(new Date())
+        setTags('')
     }
-
-    React.useEffect(() => {
-        setLoading(createLoading)
-    }, [, createLoading])
-
-    React.useEffect(() => {
-        setLoading(updateLoading)
-    }, [updateLoading])
 
     React.useEffect(() => {
 

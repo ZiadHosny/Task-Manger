@@ -35,9 +35,9 @@ export const signIn = catchAsyncError(async (req: Request, res: Response, next: 
             const token = generateToken({ firstName: user.firstName, lastName: user.lastName, userId: user._id })
             res.json({ message: "success", name: `${user.firstName}  ${user.lastName}`, token })
         } else {
-            res.json({ message: "Worng Password" })
+            return next(new AppError("Worng Password", 400))
         }
     } else {
-        res.json({ message: "User Not Found." })
+        return next(new AppError("User Not Found.", 400))
     }
 })
