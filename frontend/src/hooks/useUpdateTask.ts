@@ -9,7 +9,7 @@ export const useUpdateTask = () => {
     const [_, setCreateOrUpdateTask] = useRecoilState(createOrUpdateTaskState)
     const [__, setOpenCreateTask] = useRecoilState(openCreateOrUpdateTaskState)
 
-    const result = useAsyncFn(async ({ taskId, taskName, description, dueDate, isCompleted }: Task) => {
+    const result = useAsyncFn(async ({ taskId, taskName, description, dueDate, isCompleted, tags }: Task) => {
         const response = await fetch(`${backendBaseURL}/api/tasks/${taskId}`,
             {
                 method: 'PUT',
@@ -17,7 +17,7 @@ export const useUpdateTask = () => {
                     'Content-Type': 'application/json',
                     token: JSON.parse(localStorage['user']).token
                 },
-                body: JSON.stringify({ taskName, description, dueDate, isCompleted }),
+                body: JSON.stringify({ taskName, description, dueDate, isCompleted, tags }),
             }
         );
         const result = await response.json();
