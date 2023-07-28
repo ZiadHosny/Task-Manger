@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { loadingState, openCreateOrUpdateTaskState, taskDateState } from '../utils/atoms';
 import { Box, Checkbox, FormControlLabel, IconButton, TextField, Typography } from '@mui/material';
 import { DateComponent } from './Date';
@@ -24,7 +24,6 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export const CreateTask = () => {
-    const [_, setLoading] = useRecoilState(loadingState)
     const [taskName, setTaskName] = React.useState<string>('')
     const [description, setDescription] = React.useState<string>('')
     const [tags, setTags] = React.useState<string>('')

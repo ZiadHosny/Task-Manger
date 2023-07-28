@@ -10,16 +10,15 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useTasks } from '../hooks/useTasks';
 import { Box, Button, Checkbox, Chip, IconButton, Pagination, TableSortLabel } from '@mui/material';
-import { createOrUpdateTaskState, loadingState, openCreateOrUpdateTaskState } from '../utils/atoms';
+import { createOrUpdateTaskState, openCreateOrUpdateTaskState } from '../utils/atoms';
 import { useRecoilState } from 'recoil';
 import { CreateTask } from './CreateTask';
 import { useDeleteTask } from '../hooks/useDeleteTask';
 import { useCompleteTask } from '../hooks/useCompleteTask';
 
 export const TaskTable = () => {
-    const [_loading, setLoading] = useRecoilState(loadingState)
-    const [{ value, loading }, getAllTasks] = useTasks()
-    const [{ loading: taskCompleteLoading }, changeTaskCompletion] = useCompleteTask()
+    const [{ value}, getAllTasks] = useTasks()
+    const [{}, changeTaskCompletion] = useCompleteTask()
     const [{ value: taskDeleted }, deleteTask] = useDeleteTask()
     const [currentPage, setCurrentPage] = React.useState(1)
     const [createOrUpdateTask, setCreateOrUpdateTask] = useRecoilState(createOrUpdateTaskState)
@@ -27,16 +26,11 @@ export const TaskTable = () => {
 
     const deleteTaskBtn = async (id: string) => {
         await deleteTask(id)
-
     }
 
     React.useEffect(() => {
         getAllTasks({})
     }, [])
-
-    React.useEffect(() => {
-        setLoading(taskCompleteLoading)
-    }, [taskCompleteLoading])
 
     React.useEffect(() => {
         getAllTasks({ page: currentPage })
