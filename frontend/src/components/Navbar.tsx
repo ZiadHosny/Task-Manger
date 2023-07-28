@@ -26,12 +26,12 @@ export const Navbar = () => {
     };
     return (
         <header>
-            <div>Task Manger App</div>
             <img
                 className="website-logo"
                 src='https://blue-developments.net/wp-content/uploads/2021/02/Blue_.png'
                 alt="blue Logo"
             />
+            <div>Task Manger App</div>
             <div style={{ width: 100 }}>
                 {loggedInUser.name ?
                     <>

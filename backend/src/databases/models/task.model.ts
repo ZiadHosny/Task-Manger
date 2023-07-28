@@ -21,6 +21,7 @@ const taskSchema = new mongoose.Schema(
             default: false
         },
         tags: [{ type: String, default: [] }],
+        comments: [{ commentName: String, commentDate: Date, default: [] }],
         createdBy: {
             type: mongoose.Types.ObjectId,
             ref: 'User'

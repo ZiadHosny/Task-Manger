@@ -47,6 +47,11 @@ export const CreateTask = () => {
     const onClickCreateBtn = async (e: any) => {
         e.preventDefault();
         await createTask({ taskName, description, dueDate: dueDate.toDate(), tags: tags.split(',').filter((e) => e), isCompleted: false })
+        setIsCompleted(false)
+        setTaskName('')
+        setDescription('')
+        setDueDate(dayjs(new Date()))
+        setTags('')
     }
 
     const onClickUpdateBtn = async (e: any) => {

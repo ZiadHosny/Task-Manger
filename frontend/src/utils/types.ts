@@ -1,10 +1,16 @@
+export type Comment = {
+    commentName: string
+    commentDate: Date
+}
+
 export type Task = {
     taskId: string,
     taskName: string,
     description: string,
     dueDate: Date,
     isCompleted: boolean,
-    tags: string[]
+    tags: string[],
+    comments?: Comment[],
 }
 
 export type CreateTaskData = {

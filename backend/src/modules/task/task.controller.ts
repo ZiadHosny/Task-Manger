@@ -39,12 +39,27 @@ export const updateTask = catchAsyncError(async (req: Request, res: Response, ne
 
 })
 
-//
+// Update Task completion
 export const updateTaskCompleted = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
 
     const { id } = req.params;
     const { isCompleted } = req.body
     const updatedTask = await TaskModel.findByIdAndUpdate(id, { $set: { isCompleted } }, { new: true });
+
+    if (!updatedTask) {
+        return next(new AppError(`cannot find any Task with ID ${id}`, 404))
+    }
+
+    res.status(201).json({ message: "success", updatedTask });
+
+})
+
+// Add Comment
+export const AddComment = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+
+    const { id } = req.params;
+    const { comments } = req.body
+    const updatedTask = await TaskModel.findByIdAndUpdate(id, { $set: { comments } }, { new: true });
 
     if (!updatedTask) {
         return next(new AppError(`cannot find any Task with ID ${id}`, 404))
@@ -66,7 +81,6 @@ export const deleteTask = catchAsyncError(async (req: Request, res: Response, ne
 })
 
 // GET Task ById
-// DELETE Task
 export const getTask = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
 
     const { id } = req.params;

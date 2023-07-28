@@ -15,4 +15,6 @@ taskRouter
     .patch(userAuth, Task.updateTaskCompleted)
     .delete(userAuth, Task.deleteTask)
 
+taskRouter.route('/:id/comment').patch(userAuth, Task.AddComment)
+
 export default taskRouter
