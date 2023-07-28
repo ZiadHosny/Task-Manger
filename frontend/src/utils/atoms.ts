@@ -1,15 +1,16 @@
 import { atom } from 'recoil';
 import { LoggedInUser, Task } from './types';
 import { loggedInUser } from './getFromLocalStorge';
+import dayjs, { Dayjs } from 'dayjs';
 
 export const openCreateOrUpdateTaskState = atom<{ createOrUpdate?: 'create' | 'update', open: boolean, task?: Task }>({
     key: 'openCreateOrUpdateTask',
     default: { open: false }
 });
 
-export const taskDateState = atom<Date>({
+export const taskDateState = atom<Dayjs>({
     key: 'taskDate',
-    default: new Date()
+    default: dayjs(new Date())
 });
 
 export const createOrUpdateTaskState = atom<boolean>({

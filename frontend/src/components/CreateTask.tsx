@@ -13,6 +13,7 @@ import { Box, Checkbox, FormControlLabel, IconButton, TextField, Typography } fr
 import { DateComponent } from './Date';
 import { useCreateTask } from '../hooks/useCreateTask';
 import { useUpdateTask } from '../hooks/useUpdateTask';
+import dayjs from 'dayjs';
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -39,13 +40,13 @@ export const CreateTask = () => {
         setIsCompleted(false)
         setTaskName('')
         setDescription('')
-        setDueDate(new Date())
+        setDueDate(dayjs(new Date()))
         setTags('')
     };
 
     const onClickCreateBtn = async (e: any) => {
         e.preventDefault();
-        await createTask({ taskName, description, dueDate, tags: tags.split(',').filter((e) => e), isCompleted: false })
+        await createTask({ taskName, description, dueDate: dueDate.toDate(), tags: tags.split(',').filter((e) => e), isCompleted: false })
     }
 
     const onClickUpdateBtn = async (e: any) => {
@@ -55,7 +56,7 @@ export const CreateTask = () => {
                 taskId: openCreateTask.task.taskId,
                 taskName,
                 description,
-                dueDate,
+                dueDate: dueDate.toDate(),
                 isCompleted,
                 tags: tags.split(',').filter((e) => e)
             })
@@ -63,7 +64,7 @@ export const CreateTask = () => {
         setIsCompleted(false)
         setTaskName('')
         setDescription('')
-        setDueDate(new Date())
+        setDueDate(dayjs(new Date()))
         setTags('')
     }
 
@@ -74,7 +75,7 @@ export const CreateTask = () => {
             setIsCompleted(isCompleted)
             setTaskName(taskName)
             setDescription(description)
-            setDueDate(dueDate)
+            setDueDate(dayjs(dueDate))
             setTags(tags.join(','))
         }
 

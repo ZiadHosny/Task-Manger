@@ -12,13 +12,12 @@ export const DateComponent = () => {
         <LocalizationProvider dateAdapter={AdapterDayjs}  >
             <DateTimeField
 
-                value={dayjs(date)}
+                value={date}
 
-                onChange={(e, error) => {
+                onChange={(date, error) => {
                     if (!error.validationError) {
-                        setDate(new Date(JSON.stringify(e)))
+                        setDate(dayjs(date))
                     }
-
                 }}
             />
         </LocalizationProvider>
