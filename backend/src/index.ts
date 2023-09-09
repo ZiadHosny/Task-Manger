@@ -7,6 +7,7 @@ import { connectToMongoDb } from './databases/connectToMongo.js'
 import userRouter from './modules/user/user.router.js'
 import { globalErrorMiddleware } from './middleware/globalError.middleware.js'
 import cookieParser from 'cookie-parser'
+
 // Load .env
 dotenv.config()
 const { port } = getFromEnv()

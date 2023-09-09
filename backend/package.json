@@ -2,11 +2,11 @@
   "name": "task-manager-application",
   "version": "1.0.0",
   "description": "",
-  "main": "src/server.ts",
+  "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start": "ts-node --esm dist/server.js",
-    "dev": "nodemon --esm src/server.ts",
+    "start": "ts-node --esm dist/index.js",
+    "dev": "nodemon --esm src/index.ts",
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add dist",
     "build": "rimraf dist && tsc"
