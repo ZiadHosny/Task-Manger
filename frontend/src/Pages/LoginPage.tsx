@@ -52,7 +52,7 @@ export const LoginPage = () => {
 
             navigate(redirect);
         } catch (err: any) {
-            toast.error(err?.data?.err || err?.error);
+            toast.error(err?.data?.error || err?.error);
         }
     };
 
