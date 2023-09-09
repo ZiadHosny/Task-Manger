@@ -1,0 +1,24 @@
+{
+  "name": "task-manager",
+  "version": "1.0.0",
+  "description": "Task Manger App",
+  "main": "index.js",
+  "scripts": {
+    "server": "npm run dev --prefix backend",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZiadHosny/Task-Manger.git"
+  },
+  "author": "Ziad Hosny",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZiadHosny/Task-Manger/issues"
+  },
+  "homepage": "https://github.com/ZiadHosny/Task-Manger#readme",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
