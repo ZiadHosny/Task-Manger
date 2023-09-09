@@ -1,5 +1,3 @@
-import bcrypt from 'bcrypt'
-import { getFromEnv } from '../../utils/getFromEnv.js'
 import { generateToken } from '../../utils/generateToken.js'
 import { UserModel } from '../../databases/models/user.model.js'
 import { catchAsyncError } from '../../utils/catchAsyncError.js'
@@ -8,17 +6,21 @@ import { AppError } from '../../utils/AppError.js'
 
 export const signUp = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     const { firstName, lastName, email, password } = req.body;
-    const { rounds } = getFromEnv()
 
-    let user = await UserModel.findOne({ email })
+    const userExists = await UserModel.findOne({ email })
+
+    if (userExists) {
+        return next(new AppError("User Already exists", 400))
+    }
+
+    const user = await UserModel.create({ firstName, lastName, email, password })
+
     if (user) {
-        return next(new AppError("Email Already exists", 400))
-    } else {
-        bcrypt.hash(password, rounds, async (err, hash) => {
-            await UserModel.insertMany({ firstName, lastName, email, password: hash })
+        generateToken(res, user._id);
 
-            res.json({ message: "success" })
-        })
+        res.status(201).json(user);
+    } else {
+        return next(new AppError("Invalid user data", 400))
     }
 })
 
@@ -26,18 +28,20 @@ export const signIn = catchAsyncError(async (req: Request, res: Response, next: 
 
     const { email, password } = req.body;
 
-    const user = await UserModel.findOne({ email })
+    const user = await UserModel.findOne({ email }) as any
 
-    if (user) {
-        const match = await bcrypt.compare(password, user.password ?? '')
-
-        if (match) {
-            const token = generateToken({ firstName: user.firstName, lastName: user.lastName, userId: user._id })
-            res.json({ message: "success", name: `${user.firstName}  ${user.lastName}`, token })
-        } else {
-            return next(new AppError("Worng Password", 400))
-        }
+    if (user && await user.matchPassword(password)) {
+        generateToken(res, user._id);
+        res.json(user)
     } else {
-        return next(new AppError("User Not Found.", 400))
+        return next(new AppError('Invalid email or password', 401))
     }
+})
+
+export const logoutUser = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    res.cookie('jwt', '', {
+        httpOnly: true,
+        expires: new Date(0),
+    });
+    res.status(200).json({ message: 'Logged out successfully' });
 })

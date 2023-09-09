@@ -1,14 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
-import { TaskPage } from './Pages/TaskPage';
-import { ThemeProvider, createTheme } from '@mui/material';
-import { SignUpPage } from './Pages/SignUpPage';
-import { LoginPage } from './Pages/LoginPage';
-import { HomePage } from './Pages/HomePage';
-import { loadingState, loggedInUserState } from './utils/atoms';
-import { useRecoilValue } from 'recoil';
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
+import { Box, ThemeProvider, createTheme } from '@mui/material';
+import { Loading } from './components/Loading';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const darkTheme = createTheme({
   palette: {
@@ -17,37 +12,19 @@ const darkTheme = createTheme({
 });
 
 const App = () => {
-  const loggedInUser = useRecoilValue(loggedInUserState)
-  const loading = useRecoilValue(loadingState)
-
-  const PrivateRoutes = () => {
-    return (
-      loggedInUser.name ? <TaskPage /> : <Navigate to="/login" />
-    )
-  }
 
   return (
-    <div className='app'>
-      <ThemeProvider theme={darkTheme}>
-        <BrowserRouter>
+    <>
+      <Box className='app'>
+        <ThemeProvider theme={darkTheme}>
           <Navbar />
-          <Routes>
-            <Route path='/signup' element={<SignUpPage />} />
-            <Route path='/login' element={<LoginPage />} />
-            <Route element={<PrivateRoutes />}>
-              <Route path='/tasks' element={<TaskPage />} />
-            </Route>
-            <Route path='/' element={loggedInUser.name ? <TaskPage /> : <HomePage />} />
-          </Routes>
-        </BrowserRouter>
-      </ThemeProvider>
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
-    </div >
+          <ToastContainer />
+          <Outlet />
+          <Loading />
+        </ThemeProvider >
+      </Box>
+
+    </>
   )
 }
 

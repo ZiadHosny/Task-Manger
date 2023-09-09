@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useState, useEffect } from 'react'
 import { Avatar, Menu, MenuItem } from '@mui/material'
 import '../styles/Navbar.css'
 import Logout from '@mui/icons-material/Logout';
@@ -6,16 +6,23 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { useNavigate } from 'react-router-dom';
-import { loggedInUserState } from '../utils/atoms';
-import { useRecoilState } from 'recoil';
-import { LoggedInUser } from '../utils/types';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { StoreState } from '../store';
+import { useLogoutMutation } from '../slices/usersApiSlice';
+import { logout } from '../slices/authSlice';
+import { loading } from '../slices/loadingSlice';
+import { toast } from 'react-toastify';
+import logo from '../images/task.png'
 
 export const Navbar = () => {
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const { userInfo } = useSelector((state: StoreState) => state.auth);
+    const [logoutApiCall, { isLoading }] = useLogoutMutation();
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-    const navigate = useNavigate()
-    const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState)
 
     const handleClick = (event: any) => {
         setAnchorEl(event.currentTarget);
@@ -24,16 +31,31 @@ export const Navbar = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    useEffect(() => {
+        dispatch(loading(isLoading))
+    }, [dispatch, loading])
+
+    const onClickLogout = async () => {
+        try {
+            await logoutApiCall({}).unwrap();
+            dispatch(logout())
+            navigate('/login');
+        } catch (err: any) {
+            toast.error(err?.data?.error || err?.error);
+        }
+    }
+
     return (
         <header>
             <img
                 className="website-logo"
-                src='https://blue-developments.net/wp-content/uploads/2021/02/Blue_.png'
-                alt="blue Logo"
+                src={logo}
+                alt="task Logo"
             />
             <div>Task Manger App</div>
             <div style={{ width: 100 }}>
-                {loggedInUser.name ?
+                {userInfo ?
                     <>
                         <Tooltip title="Account settings">
                             <IconButton
@@ -44,7 +66,7 @@ export const Navbar = () => {
                                 aria-haspopup="true"
                                 aria-expanded={open ? 'true' : undefined}
                             >
-                                <Avatar sx={{ width: 32, height: 32 }}>{loggedInUser.name[0]?.toUpperCase()}</Avatar>
+                                <Avatar sx={{ width: 32, height: 32 }}>{`${userInfo.firstName[0]?.toUpperCase()}`}</Avatar>
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -83,13 +105,9 @@ export const Navbar = () => {
                             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                         >
                             <MenuItem>
-                                {loggedInUser.name}
+                                {userInfo.firstName}
                             </MenuItem>
-                            <MenuItem onClick={() => {
-                                localStorage.removeItem('user')
-                                setLoggedInUser({} as LoggedInUser)
-                                navigate('/')
-                            }}>
+                            <MenuItem onClick={onClickLogout}>
                                 <ListItemIcon>
                                     <Logout fontSize="small" />
                                 </ListItemIcon>

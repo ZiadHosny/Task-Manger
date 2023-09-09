@@ -1,11 +1,23 @@
+import { useEffect } from "react";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
+import { useSelector } from "react-redux";
+import { StoreState } from "../store";
 
 export const HomePage = () => {
     const navigate = useNavigate()
+    const { userInfo } = useSelector((state: StoreState) => state.auth);
+
+    useEffect(() => {
+        if (userInfo) {
+            navigate('/tasks');
+        }
+    }, [navigate, userInfo]);
+
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />

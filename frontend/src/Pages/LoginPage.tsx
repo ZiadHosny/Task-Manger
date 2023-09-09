@@ -1,44 +1,64 @@
-import * as React from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+import { useEffect } from "react";
+import {
+    Avatar,
+    Button,
+    CssBaseline,
+    TextField,
+    Link,
+    Grid,
+    Box,
+    Typography,
+    Container
+} from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { useLogin } from "../hooks/useLogin";
-import { useNavigate } from "react-router-dom";
-import Alert from '@mui/material/Alert';
-import Snackbar from '@mui/material/Snackbar';
-import { loadingState } from "../utils/atoms";
-import { useRecoilState } from "recoil";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from "react-redux";
+import { useLoginMutation } from "../slices/usersApiSlice";
+import { setCredentials } from "../slices/authSlice";
+import { StoreState } from "../store";
+import { loading } from "../slices/loadingSlice";
 
 export const LoginPage = () => {
-    const [_loading, setLoading] = useRecoilState(loadingState)
-    const navigate = useNavigate()
-    const [open, setOpen] = React.useState(false);
-    const [{ error, loading }, loginFn] = useLogin()
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const { search } = useLocation();
+    const sp = new URLSearchParams(search);
+    const redirect = sp.get('redirect') || '/';
+
+    const [login, { isLoading }] = useLoginMutation();
+    const { userInfo } = useSelector((state: StoreState) => state.auth);
+
+    useEffect(() => {
+        if (userInfo) {
+            navigate(redirect);
+        }
+    }, [navigate, redirect, userInfo]);
+
+    useEffect(() => {
+        dispatch(loading(isLoading))
+    }, [dispatch, loading])
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        const email = data.get('email') as string
-        const password = data.get('password') as string
-        if (email && password) {
-            loginFn({ email, password })
+        try {
+            const data = new FormData(event.currentTarget);
+            const email = data.get('email') as string
+            const password = data.get('password') as string
+
+            const res = await login({ email, password }).unwrap();
+            dispatch(setCredentials({ ...res }));
+
+            navigate(redirect);
+        } catch (err: any) {
+            toast.error(err?.data?.err || err?.error);
         }
     };
 
-    React.useEffect(() => {
-        if (error) {
-            setOpen(true);
-        }
-        if (loading) {
-            setLoading(true);
-        }
-    }, [error])
+    const onClickSignUpPage = () => {
+        navigate('/signup')
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -96,19 +116,13 @@ export const LoginPage = () => {
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link onClick={() => { navigate('/signup') }} variant="body2">
+                            <Link onClick={onClickSignUpPage} variant="body2">
                                 I don't have an account? Sign Up
                             </Link>
                         </Grid>
                     </Grid>
                 </Box>
             </Box>
-            <Snackbar
-                open={open}
-                autoHideDuration={6000}
-            >
-                <Alert severity="error">{error?.message ?? ''}</Alert>
-            </Snackbar>
         </Container>
     );
 }

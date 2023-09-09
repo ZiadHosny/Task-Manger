@@ -1,56 +1,66 @@
-import * as React from "react";
-import { useNavigate } from 'react-router-dom'
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
-import Alert from '@mui/material/Alert';
-import Grid from "@mui/material/Grid";
-import Snackbar from '@mui/material/Snackbar';
-import Box from "@mui/material/Box";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from 'react-router-dom'
+import {
+    Avatar,
+    Button,
+    CssBaseline,
+    TextField,
+    Link,
+    Grid,
+    Box,
+    Typography,
+    Container
+} from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { useSignUp } from "../hooks/useSignUp";
-import { useRecoilState } from "recoil";
-import { loadingState } from "../utils/atoms";
-
+import { useDispatch, useSelector } from "react-redux";
+import { useRegisterMutation } from "../slices/usersApiSlice";
+import { StoreState } from "../store";
+import { toast } from "react-toastify";
+import { setCredentials } from "../slices/authSlice";
+import { loading } from "../slices/loadingSlice";
 
 export const SignUpPage = () => {
-    const [_loading, setLoading] = useRecoilState(loadingState)
-    const navigate = useNavigate()
-    const [open, setOpen] = React.useState(false);
-    const [{ error, loading }, signUpFn] = useSignUp()
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const { search } = useLocation();
+    const sp = new URLSearchParams(search);
+    const redirect = sp.get('redirect') || '/';
+
+    const [signUp, { isLoading }] = useRegisterMutation();
+    const { userInfo } = useSelector((state: StoreState) => state.auth);
+
+    useEffect(() => {
+        if (userInfo) {
+            navigate(redirect);
+        }
+    }, [navigate, redirect, userInfo]);
+
+    useEffect(() => {
+        dispatch(loading(isLoading))
+    }, [dispatch, loading])
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        const firstName = data.get('firstName') as string
-        const lastName = data.get('lastName') as string
-        const email = data.get('email') as string
-        const password = data.get('password') as string
+        try {
+            const data = new FormData(event.currentTarget);
+            const firstName = data.get('firstName') as string
+            const lastName = data.get('lastName') as string
+            const email = data.get('email') as string
+            const password = data.get('password') as string
 
-        if (email && password) {
-            signUpFn({ firstName, lastName, email, password })
+            const res = await signUp({ firstName, lastName, email, password }).unwrap();
+            dispatch(setCredentials({ ...res }));
+
+            navigate(redirect);
+        } catch (err: any) {
+            toast.error(err?.data?.error || err?.error);
         }
     };
 
-    const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setOpen(false);
-    };
-
-    React.useEffect(() => {
-        if (error) {
-            setOpen(true);
-        }
-        if (loading) {
-            setLoading(true);
-        }
-    }, [error])
+    const onClickSignInPage = () => {
+        navigate('/login')
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -129,20 +139,13 @@ export const SignUpPage = () => {
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link onClick={() => { navigate('/login') }} variant="body2">
+                            <Link onClick={onClickSignInPage} variant="body2">
                                 Already have an account? Sign in
                             </Link>
                         </Grid>
                     </Grid>
                 </Box>
             </Box>
-            <Snackbar
-                open={open}
-                autoHideDuration={1000}
-                onClose={handleClose}
-            >
-                <Alert severity="error">{error?.message ?? ''}</Alert>
-            </Snackbar>
         </Container>
     );
 }
