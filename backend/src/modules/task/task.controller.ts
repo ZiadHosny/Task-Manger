@@ -2,9 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import { TaskModel } from "../../databases/models/task.model.js";
 import { catchAsyncError } from "../../utils/catchAsyncError.js";
 import { AppError } from "../../utils/AppError.js";
+import { AuthRequest } from "../../utils/types.js";
+
 
 // GET All Tasks "/"
-export const getAllTasks = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+export const getAllTasks = catchAsyncError(async (req: AuthRequest, res: Response, next: NextFunction) => {
     const userId = req.userId
     const sort = req.query.sort?.toString()
     let page = Number(req.query.page) > 1 ? Number(req.query.page) : 1
@@ -16,7 +18,7 @@ export const getAllTasks = catchAsyncError(async (req: Request, res: Response, n
 })
 
 // POST a Task
-export const createTask = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+export const createTask = catchAsyncError(async (req: AuthRequest, res: Response, next: NextFunction) => {
 
     const { taskId, taskName, description, dueDate, isCompleted, tags } = req.body
 

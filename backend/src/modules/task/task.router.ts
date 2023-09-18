@@ -1,6 +1,6 @@
 import express from 'express'
 import * as Task from './task.controller.js'
-import { userAuth } from '../../middlewares/auth.middleware.js'
+import { userAuth } from '../../middleware/auth.middleware.js'
 
 const taskRouter = express.Router()
 

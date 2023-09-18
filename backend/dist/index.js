@@ -15,8 +15,8 @@ connectToMongoDb();
 const app = express();
 // Express Middleware
 app.use(express.json());
-app.use(cookieParser());
 app.use(cors());
+app.use(cookieParser());
 // EndPoints
 app.use('/api/tasks', taskRouter);
 app.use('/api/users', userRouter);

@@ -3,13 +3,17 @@
     "name": "task-manger-backend",
     "builds": [
         {
-            "src": "./dist/index.js",
+            "src": "./backend/dist/index.js",
             "use": "@vercel/node",
             "config": {
                 "includeFiles": [
-                    "dist/**"
+                    "backend/dist/**"
                 ]
             }
+        },
+        {
+            "src": "./frontend/build/**",
+            "use": "@vercel/static"
         }
     ],
     "routes": [

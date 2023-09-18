@@ -4,16 +4,10 @@ import { NextFunction, Request, Response } from "express";
 import { AppError } from "../utils/AppError.js";
 import { UserModel } from "../databases/models/user.model.js";
 import { catchAsyncError } from "../utils/catchAsyncError.js";
+import { AuthRequest } from "../utils/types.js";
 
-declare global {
-    namespace Express {
-        interface Request {
-            user: any
-        }
-    }
-}
 
-export const userAuth = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+export const userAuth = catchAsyncError(async (req: AuthRequest, res: Response, next: NextFunction) => {
 
     const { secretKey } = getFromEnv()
     // Read JWT from the 'jwt' cookie
