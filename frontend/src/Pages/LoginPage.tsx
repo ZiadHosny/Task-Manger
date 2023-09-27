@@ -13,22 +13,22 @@ import {
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
-import { useDispatch, useSelector } from "react-redux";
-import { useLoginMutation } from "../slices/usersApiSlice";
-import { setCredentials } from "../slices/authSlice";
-import { StoreState } from "../store";
-import { loading } from "../slices/loadingSlice";
+import { useLoginMutation } from "../store/usersApiSlice";
+import { setCredentials } from "../store/authSlice";
+import { setLoading } from "../store/loadingSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 export const LoginPage = () => {
-    const dispatch = useDispatch();
+    const { userInfo } = useAppSelector(state => state.auth);
+
+    const dispatch = useAppDispatch();
+    const [login, { isLoading }] = useLoginMutation();
+
     const navigate = useNavigate();
 
     const { search } = useLocation();
     const sp = new URLSearchParams(search);
     const redirect = sp.get('redirect') || '/';
-
-    const [login, { isLoading }] = useLoginMutation();
-    const { userInfo } = useSelector((state: StoreState) => state.auth);
 
     useEffect(() => {
         if (userInfo) {
@@ -37,8 +37,8 @@ export const LoginPage = () => {
     }, [navigate, redirect, userInfo]);
 
     useEffect(() => {
-        dispatch(loading(isLoading))
-    }, [dispatch, loading])
+        dispatch(setLoading(isLoading))
+    }, [dispatch, setLoading, isLoading])
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -91,7 +91,7 @@ export const LoginPage = () => {
                                 id="email"
                                 label="Email Address"
                                 name="email"
-                                autoComplete="email"
+                                autoComplete="one-time-code"
                             />
                         </Grid>
                         <Grid item xs={12}>

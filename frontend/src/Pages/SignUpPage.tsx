@@ -12,23 +12,23 @@ import {
     Container
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { useDispatch, useSelector } from "react-redux";
-import { useRegisterMutation } from "../slices/usersApiSlice";
-import { StoreState } from "../store";
+import { useRegisterMutation } from "../store/usersApiSlice";
 import { toast } from "react-toastify";
-import { setCredentials } from "../slices/authSlice";
-import { loading } from "../slices/loadingSlice";
+import { setCredentials } from "../store/authSlice";
+import { setLoading } from "../store/loadingSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 export const SignUpPage = () => {
-    const dispatch = useDispatch();
+    const { userInfo } = useAppSelector(state => state.auth);
+
+    const dispatch = useAppDispatch();
+    const [signUp, { isLoading }] = useRegisterMutation();
+
     const navigate = useNavigate();
 
     const { search } = useLocation();
     const sp = new URLSearchParams(search);
     const redirect = sp.get('redirect') || '/';
-
-    const [signUp, { isLoading }] = useRegisterMutation();
-    const { userInfo } = useSelector((state: StoreState) => state.auth);
 
     useEffect(() => {
         if (userInfo) {
@@ -37,8 +37,8 @@ export const SignUpPage = () => {
     }, [navigate, redirect, userInfo]);
 
     useEffect(() => {
-        dispatch(loading(isLoading))
-    }, [dispatch, loading])
+        dispatch(setLoading(isLoading))
+    }, [dispatch, setLoading, isLoading])
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
