@@ -4,12 +4,11 @@ import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
-import { useSelector } from "react-redux";
-import { StoreState } from "../store";
+import { useAppSelector } from "../store/hooks";
 
 export const HomePage = () => {
     const navigate = useNavigate()
-    const { userInfo } = useSelector((state: StoreState) => state.auth);
+    const { userInfo } = useAppSelector((state) => state.auth);
 
     useEffect(() => {
         if (userInfo) {
