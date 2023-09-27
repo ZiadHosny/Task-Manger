@@ -8,13 +8,13 @@ const loadingSlice = createSlice({
     name: 'loading',
     initialState,
     reducers: {
-        loading: (state, action) => {
+        setLoading: (state, action) => {
             state.isLoading = action.payload
         }
     }
 })
 
 
-export const { loading } = loadingSlice.actions
+export const { setLoading } = loadingSlice.actions
 
 export default loadingSlice.reducer

@@ -1,14 +1,13 @@
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useDispatch, useSelector } from 'react-redux';
-import { StoreState } from '../store/store';
-import { loading } from '../store/loadingSlice';
+import { setLoading } from '../store/loadingSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 export const Loading = () => {
-    const { isLoading } = useSelector((state: StoreState) => state.loading);
-    const dispatch = useDispatch()
+    const { isLoading } = useAppSelector((state) => state.loading);
+    const dispatch = useAppDispatch()
     const handleClose = () => {
-        dispatch(loading(false))
+        dispatch(setLoading(false))
     };
 
     return (
