@@ -14,17 +14,14 @@ const darkTheme = createTheme({
 const App = () => {
 
   return (
-    <>
-      <Box className='app'>
-        <ThemeProvider theme={darkTheme}>
-          <Navbar />
-          <ToastContainer />
-          <Outlet />
-          <Loading />
-        </ThemeProvider >
-      </Box>
-
-    </>
+    <Box className='app'>
+      <ThemeProvider theme={darkTheme}>
+        <Navbar />
+        <ToastContainer />
+        <Outlet />
+        <Loading />
+      </ThemeProvider >
+    </Box>
   )
 }
 
