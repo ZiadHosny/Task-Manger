@@ -6,20 +6,20 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { StoreState } from '../store';
-import { useLogoutMutation } from '../slices/usersApiSlice';
-import { logout } from '../slices/authSlice';
-import { loading } from '../slices/loadingSlice';
+import { useLogoutMutation } from '../store/usersApiSlice';
+import { logout } from '../store/authSlice';
+import { setLoading } from '../store/loadingSlice';
 import { toast } from 'react-toastify';
 import logo from '../images/task.png'
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 export const Navbar = () => {
-    const { userInfo } = useSelector((state: StoreState) => state.auth);
+    const { userInfo } = useAppSelector((state) => state.auth);
+
+    const dispatch = useAppDispatch();
     const [logoutApiCall, { isLoading }] = useLogoutMutation();
 
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -33,8 +33,8 @@ export const Navbar = () => {
     };
 
     useEffect(() => {
-        dispatch(loading(isLoading))
-    }, [dispatch, loading])
+        dispatch(setLoading(isLoading))
+    }, [dispatch, setLoading, isLoading])
 
     const onClickLogout = async () => {
         try {
