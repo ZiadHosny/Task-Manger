@@ -20,8 +20,3 @@ export type CreateTaskData = {
     isCompleted?: boolean,
     tags: string[]
 }
-
-export type LoggedInUser = {
-    name: string,
-    token: string,
-}
