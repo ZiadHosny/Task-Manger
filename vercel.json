@@ -1,6 +1,6 @@
 {
     "version": 2,
-    "name": "task-manger-backend",
+    "name": "task-manger",
     "builds": [
         {
             "src": "./backend/dist/index.js",
