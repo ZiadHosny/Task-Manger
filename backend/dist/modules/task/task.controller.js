@@ -3,7 +3,7 @@ import { catchAsyncError } from "../../utils/catchAsyncError.js";
 import { AppError } from "../../utils/AppError.js";
 // GET All Tasks "/"
 export const getAllTasks = catchAsyncError(async (req, res, next) => {
-    const userId = req.userId;
+    const userId = req.user._id;
     const sort = req.query.sort?.toString();
     let page = Number(req.query.page) > 1 ? Number(req.query.page) : 1;
     const limit = 5;
@@ -15,7 +15,7 @@ export const getAllTasks = catchAsyncError(async (req, res, next) => {
 // POST a Task
 export const createTask = catchAsyncError(async (req, res, next) => {
     const { taskName, description, dueDate, isCompleted, tags } = req.body;
-    const task = await TaskModel.create({ taskName, description, dueDate, isCompleted, tags, createdBy: req.userId });
+    const task = await TaskModel.create({ taskName, description, dueDate, isCompleted, tags, createdBy: req.user._id });
     res.status(201).json({ message: "success", data: task });
 });
 // PUT Task
