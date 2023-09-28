@@ -20,9 +20,9 @@ export const getAllTasks = catchAsyncError(async (req: AuthRequest, res: Respons
 // POST a Task
 export const createTask = catchAsyncError(async (req: AuthRequest, res: Response, next: NextFunction) => {
 
-    const { taskId, taskName, description, dueDate, isCompleted, tags } = req.body
+    const { taskName, description, dueDate, isCompleted, tags } = req.body
 
-    const task = await TaskModel.create({ taskId, taskName, description, dueDate, isCompleted, tags, createdBy: req.userId })
+    const task = await TaskModel.create({ taskName, description, dueDate, isCompleted, tags, createdBy: req.userId })
 
     res.status(201).json({ message: "success", data: task });
 })

@@ -1,12 +1,12 @@
 import { Tasks_URL } from "../utils/constants";
-import { Comment } from "../utils/types";
+import { Comment, Task } from "../utils/types";
 import { apiSlice } from "./apiSlice";
 
 const taskApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getAllTasks: builder.query({
-            query: () => ({
-                url: `${Tasks_URL}/`,
+            query: ({ page, sort }: { page: number, sort: string }) => ({
+                url: `${Tasks_URL}?page=${page}&sort=${sort}`,
                 method: 'GET',
             }),
         }),
@@ -18,8 +18,8 @@ const taskApiSlice = apiSlice.injectEndpoints({
             }),
         }),
         updateTask: builder.mutation({
-            query: (data) => ({
-                url: `${Tasks_URL}/`,
+            query: (data: Task) => ({
+                url: `${Tasks_URL}/${data.taskId}`,
                 method: 'PUT',
                 body: data,
             }),

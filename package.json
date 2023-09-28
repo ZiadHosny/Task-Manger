@@ -10,12 +10,16 @@
     "client": "npm start --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "ts.check": "tsc --project tsconfig.json",
-    "add-build": "git add dist --prefix frontend",
-    "build": "rimraf dist && tsc"
+    "add-dist": "cd backend && git add dist",
+    "add-build": "cd frontend && git add build",
+    "build-backend": "cd backend && rimraf dist && tsc",
+    "build-frontend": "cd frontend && npm run build"
   },
   "pre-commit": [
     "ts.check",
-    "build",
+    "build-backend",
+    "add-dist",
+    "build-frontend",
     "add-build"
   ],
   "author": "",
