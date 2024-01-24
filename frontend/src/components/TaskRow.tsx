@@ -49,7 +49,7 @@ export const TaskRow = ({ task, refetchTasks }: { task: Task, refetchTasks: Void
                 render({ toastProps }) {
                     const res = toastProps.data as any
                     const error = res.data.error ?? errorMsg
-                    return error 
+                    return error
                 },
             },
         })
@@ -143,7 +143,7 @@ export const TaskRow = ({ task, refetchTasks }: { task: Task, refetchTasks: Void
 
                             {!task.comments || task.comments.length < 1 ?
 
-                                <Typography variant='h4' align='center'>No Comment For This Task</Typography>
+                                <Typography variant='h5' align='center'>No Comment For This Task</Typography>
                                 :
                                 <>
                                     <Typography variant="h6" gutterBottom component="div">
