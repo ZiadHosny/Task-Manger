@@ -38,7 +38,7 @@ export const LoginPage = () => {
 
     useEffect(() => {
         dispatch(setLoading(isLoading))
-    }, [dispatch, setLoading, isLoading])
+    }, [dispatch, isLoading])
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -51,6 +51,9 @@ export const LoginPage = () => {
             dispatch(setCredentials({ ...res }));
 
             navigate(redirect);
+
+            toast.success('Login Successfully!');
+
         } catch (err: any) {
             toast.error(err?.data?.error || err?.error);
         }

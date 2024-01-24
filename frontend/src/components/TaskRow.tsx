@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import {
-    Box, Button, Checkbox,
-    Chip, Collapse, IconButton,
+    Box, Button,
+    Checkbox, Chip,
+    Collapse, IconButton,
     InputAdornment, TextField,
     Typography, TableHead,
     TableRow, TableBody,
@@ -15,46 +16,47 @@ import CommentIcon from '@mui/icons-material/Comment';
 import { Task } from "../utils/types";
 import { useAppDispatch } from '../store/hooks';
 import { setModal } from '../store/modalSlice';
-import { useAddCommentMutation, useChangeCompleteTaskMutation, useDeleteTaskMutation } from '../store/taskApiSlice';
+import { useAddCommentMutation, useChangeCompleteTaskMutation } from '../store/taskApiSlice';
 import { setLoading } from '../store/loadingSlice';
 import { toast } from 'react-toastify';
+import { DeleteAlert } from './DeleteAlert';
+import { errorMsg, loadingMsg, updateMsg } from '../utils/messages';
 
 export const TaskRow = ({ task, refetchTasks }: { task: Task, refetchTasks: VoidFunction }) => {
     const [currentComment, setCurrentComment] = useState('');
+    const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
     const [open, setOpen] = useState(false);
 
     const dispatch = useAppDispatch()
 
-    const [deleteTaskFn, { isLoading: deleteIsLoading, }] = useDeleteTaskMutation()
     const [changeCompleteTaskFn, { isLoading: changeCompleteTaskIsLoading }] = useChangeCompleteTaskMutation()
     const [addCommentFn, { isLoading: addCommentIsLoading }] = useAddCommentMutation()
-
 
     const openUpdateModal = (task: Task) => {
         dispatch(setModal({ createOrUpdate: 'update', open: true, task }))
     }
 
-    const deleteTaskBtn = async (id: string) => {
-        try {
-            await deleteTaskFn(id).unwrap()
-            refetchTasks()
-        }
-        catch (err: any) {
-            toast.error(err?.data?.error || err?.error);
-        }
-    }
-
     const checkCompleteTask = async () => {
-        try {
+        toast.promise(async () => {
             await changeCompleteTaskFn({ id: task.taskId, isCompleted: !task.isCompleted }).unwrap()
-            refetchTasks()
-        } catch (err: any) {
-            toast.error(err?.data?.error || err?.error);
-        }
+            refetchTasks();
+        }, {
+            pending: loadingMsg,
+            success: updateMsg,
+            error: {
+                render({ toastProps }) {
+                    const res = toastProps.data as any
+                    const error = res.data.error ?? errorMsg
+                    return error 
+                },
+            },
+        })
     }
 
     const addComment = async () => {
-        try {
+        toast.promise(async () => {
             await addCommentFn({
                 id: task.taskId,
                 comments:
@@ -63,24 +65,33 @@ export const TaskRow = ({ task, refetchTasks }: { task: Task, refetchTasks: Void
                         { commentName: currentComment, commentDate: new Date() }
                     ]
             }).unwrap()
-            setCurrentComment('')
-            refetchTasks()
-        } catch (err: any) {
-            toast.error(err?.data?.error || err?.error);
-        }
+            setCurrentComment('');
+            refetchTasks();
+        }, {
+            pending: loadingMsg,
+            success: updateMsg,
+            error: {
+                render({ toastProps }) {
+                    const res = toastProps.data as any
+                    const error = res.data.error ?? res.error ?? errorMsg
+                    return error
+                },
+            },
+        })
     }
 
-    useEffect(() => {
-        dispatch(setLoading(deleteIsLoading))
-    }, [dispatch, setLoading, deleteIsLoading])
+    const handleDeleteAlertOpen = (task: Task) => {
+        setOpenDeleteAlert(true);
+        setSelectedTask(task);
+    };
 
     useEffect(() => {
         dispatch(setLoading(changeCompleteTaskIsLoading))
-    }, [dispatch, setLoading, changeCompleteTaskIsLoading])
+    }, [dispatch, changeCompleteTaskIsLoading])
 
     useEffect(() => {
         dispatch(setLoading(addCommentIsLoading))
-    }, [dispatch, setLoading, addCommentIsLoading])
+    }, [dispatch, addCommentIsLoading])
 
     return (
         <>
@@ -114,7 +125,7 @@ export const TaskRow = ({ task, refetchTasks }: { task: Task, refetchTasks: Void
                 </TableCell>
                 <TableCell align="center">
                     <IconButton
-                        onClick={() => deleteTaskBtn(task.taskId)}
+                        onClick={() => handleDeleteAlertOpen(task)}
                     >
                         <DeleteIcon style={{ color: 'white' }} />
                     </IconButton>
@@ -186,6 +197,8 @@ export const TaskRow = ({ task, refetchTasks }: { task: Task, refetchTasks: Void
                     </Collapse>
                 </TableCell>
             </TableRow >
+            {/* Delete Alert */}
+            <DeleteAlert open={openDeleteAlert} setOpen={setOpenDeleteAlert} selectedTask={selectedTask} refetchTasks={refetchTasks} />
         </>
 
     )

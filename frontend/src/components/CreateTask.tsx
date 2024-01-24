@@ -15,6 +15,7 @@ import { setLoading } from '../store/loadingSlice';
 import { toast } from 'react-toastify';
 import { setModal } from '../store/modalSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { createMsg, errorMsg, loadingMsg, updateMsg } from '../utils/messages';
 
 const Transition = forwardRef(function Transition(
     props: TransitionProps & {
@@ -55,7 +56,8 @@ export const CreateTask = ({ refetch }: { refetch: VoidFunction }) => {
 
     const onClickCreateBtn = async (e: any) => {
         e.preventDefault();
-        try {
+        
+        toast.promise(async () => {
             await createTaskFn({
                 taskName,
                 description,
@@ -65,17 +67,24 @@ export const CreateTask = ({ refetch }: { refetch: VoidFunction }) => {
             }).unwrap()
 
             refetch()
-        } catch (err: any) {
-            toast.error(err?.data?.error || err?.error);
-        }
-
+        }, {
+            pending: loadingMsg,
+            success: createMsg,
+            error: {
+                render({ toastProps }) {
+                    const res = toastProps.data as any
+                    const error = res.data.error ?? errorMsg
+                    return error
+                },
+            },
+        })
         resetFrom()
     }
 
     const onClickUpdateBtn = async (e: any) => {
         e.preventDefault();
 
-        try {
+        toast.promise(async () => {
             await updateTaskFn({
                 taskId: modal.task?.taskId || '',
                 taskName,
@@ -86,14 +95,21 @@ export const CreateTask = ({ refetch }: { refetch: VoidFunction }) => {
             }).unwrap()
 
             refetch()
-        } catch (err: any) {
-            toast.error(err?.data?.error || err?.error);
-        }
+        }, {
+            pending: loadingMsg,
+            success: updateMsg,
+            error: {
+                render({ toastProps }) {
+                    const res = toastProps.data as any
+                    const error = res.data.error ?? errorMsg
+                    return error
+                },
+            },
+        })
         resetFrom()
     }
 
     useEffect(() => {
-
         if (modal.createOrUpdate === 'update' && modal.task) {
             const { isCompleted, taskName, description, dueDate, tags } = modal.task
             setIsCompleted(isCompleted)
@@ -102,7 +118,6 @@ export const CreateTask = ({ refetch }: { refetch: VoidFunction }) => {
             setDueDate(dayjs(dueDate))
             setTags(tags.join(','))
         }
-
     }, [modal])
 
     useEffect(() => {

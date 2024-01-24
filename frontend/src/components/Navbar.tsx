@@ -34,13 +34,14 @@ export const Navbar = () => {
 
     useEffect(() => {
         dispatch(setLoading(isLoading))
-    }, [dispatch, setLoading, isLoading])
+    }, [dispatch, isLoading])
 
     const onClickLogout = async () => {
         try {
             await logoutApiCall({}).unwrap();
             dispatch(logout())
             navigate('/login');
+            toast.success("Logout Successfully!");
         } catch (err: any) {
             toast.error(err?.data?.error || err?.error);
         }

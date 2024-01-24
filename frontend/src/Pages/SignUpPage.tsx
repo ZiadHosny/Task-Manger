@@ -38,7 +38,7 @@ export const SignUpPage = () => {
 
     useEffect(() => {
         dispatch(setLoading(isLoading))
-    }, [dispatch, setLoading, isLoading])
+    }, [dispatch, isLoading])
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -53,6 +53,8 @@ export const SignUpPage = () => {
             dispatch(setCredentials({ ...res }));
 
             navigate(redirect);
+
+            toast.success('Signup Successfully!');
         } catch (err: any) {
             toast.error(err?.data?.error || err?.error);
         }

@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Box, ThemeProvider, createTheme } from '@mui/material';
 import { Loading } from './components/Loading';
-import { ToastContainer } from 'react-toastify';
+import { Bounce, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const darkTheme = createTheme({
@@ -17,7 +17,11 @@ const App = () => {
     <Box className='app'>
       <ThemeProvider theme={darkTheme}>
         <Navbar />
-        <ToastContainer />
+        <ToastContainer
+          theme="dark"
+          autoClose={1000}
+          transition={Bounce}
+        />
         <Outlet />
         <Loading />
       </ThemeProvider >

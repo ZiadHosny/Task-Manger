@@ -22,7 +22,7 @@ export const TaskTable = () => {
 
     const dispatch = useAppDispatch()
 
-    const { data: value, isLoading, refetch, } = useGetAllTasksQuery({ page: currentPage, sort })
+    const { data: value, isLoading, refetch } = useGetAllTasksQuery({ page: currentPage, sort })
 
     const openCreateModal = () => {
         dispatch(setModal({ createOrUpdate: 'create', open: true }))
@@ -30,7 +30,7 @@ export const TaskTable = () => {
 
     useEffect(() => {
         dispatch(setLoading(isLoading))
-    }, [dispatch, setLoading, isLoading])
+    }, [dispatch, isLoading])
 
 
     const TableTitle = ({ label, sort }: { label: string, sort: string }) => (
